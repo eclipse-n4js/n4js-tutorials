@@ -1,0 +1,36 @@
+////
+Copyright (c) 2019 NumberFour AG and others
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  NumberFour AG - Initial API and implementation
+////
+
+= N4JS-Tutorials
+
+This repository contains tutorials for the Eclipse N4JS language and its Eclipse N4JS IDE. The https://www.eclipse.org/n4js[Eclipse N4JS language and IDE] enable high-quality JavaScript development for large Node.js projects. N4JS enriches ECMAScript with a static type system and provides extensive support for static validation hosted within a feature-rich IDE.
+
+For more information, see https://www.eclipse.org/n4js[Eclipse N4JS project page] or https://github.com/eclipse/n4js[N4JS github pages].
+
+== Participate
+
+- https://www.eclipse.org/n4js/faq/[FAQ]
+- https://www.eclipse.org/forums/index.php/f/365/[Eclipse Forum]
+- https://dev.eclipse.org/mailman/listinfo/n4js-dev[Developer Mailing List]
+- https://github.com/eclipse/n4js/issues/[Issues]
+- http://n4js.blogspot.de/[Eclipse N4JS Blog]
+- https://projects.eclipse.org/projects/technology.n4js[Eclipse Project Pages]
+- https://projects.eclipse.org/projects/technology.n4js/who[Who's Involved]
+
+
+== License
+
+Copyright (c) 2019 NumberFour AG and others.
+
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
