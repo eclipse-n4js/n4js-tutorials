@@ -24,7 +24,7 @@ The chess web app is served at port 8080.
 
 The final game will look approximately like this.
 
-image:../chess-documentation/doc/images/chess-game-screenshot.png[Chess game screenshot]
+image::images/chess-game-screenshot.png[Chess game screenshot]
 
 
 == Developer Setup
