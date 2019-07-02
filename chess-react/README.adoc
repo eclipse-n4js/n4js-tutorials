@@ -5,7 +5,7 @@ The game looks like this:
 image::images/chess-game-screenshot.png[Chess game screenshot]
 
 
-# tag::DevSetup[]
+// tag::DevSetup[]
 == Developer Setup and generate folder `src-gen`
 
 Follow the following steps to import the app into N4JS IDE.
@@ -37,10 +37,10 @@ Clean & Build the project. After this step, the project has no compilation error
 
 Now, the folder `src-gen` should have been created and populated with `.js` files of the project.
 The `.js` files will be used in the next step by webpack.
-# end::DevSetup[] 
+// end::DevSetup[] 
 
 
-# tag::CreateApp[]
+// tag::CreateApp[]
 == Create the application
 
 
@@ -61,5 +61,5 @@ To start the web server, run:
 ----
 npm start
 ----
-# end::CreateApp[]
+// end::CreateApp[]
 
