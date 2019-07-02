@@ -12,44 +12,23 @@ Before starting with the implementation, let's explicitly state several features
 The final game will look approximately like this. You may want to challenge your co-worker to a game  now!
 
 +++
-<iframe src="chess.html" width="100%" height="620"></iframe>
+<iframe src="chess.html" width="100%" height="620" frameBorder="0"></iframe>
 +++
 
 == Repository
 
 The source code of the chess application can be found at link:https://github.com/Eclipse/n4js-tutorials/tree/master/chess-react[n4js-tutorials/chess-react^].
 
-== Run the application
 
-In the root folder of the project `chess-react`, execute the following command to install all dependencies.
 
-[source,bash]
-----
-npm install
-----
 
-In `package.json`, a `start` script for starting the Webpack Dev Server serving the application is defined. To start the application, run
+include::../../chess-react/README.adoc[leveloffset=0,tag=DevSetup]
 
-[source,bash]
-----
-npm start
-----
+include::../../chess-react/README.adoc[leveloffset=0,tag=CreateApp]
 
-The chess web app is served at port 8080.
 
-== Developer Setup
 
-Follow the following steps to import the app into N4JS IDE.
 
-Step 1: Download the link:https://projects.eclipse.org/projects/technology.n4js/downloads[latest N4JS IDE^] for your operating system.
-
-Step 2: The project is already an Eclipse with the `.project` file in the root `chess`. Hence, you can simply import it into the N4JS IDE workspace via `File => Import => Existing Projects into Workspace`.
-
-The IDE may complain that npm dependencies declared in `package.json` are missing. Use the quickfix `run npm/yarn in this project` to fix this issue.
-
-Step 3: Open the library manager dialog and choose `Re-Build node_modules`.
-
-Step 4: Clean & Build the project. After this step, the project should has no compilation errors anymore.
 
 == N4JS type definitions of React
 

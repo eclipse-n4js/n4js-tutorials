@@ -5,35 +5,44 @@ The game looks like this:
 image::images/chess-game-screenshot.png[Chess game screenshot]
 
 
-
+# tag::DevSetup[]
 == Developer Setup and generate folder `src-gen`
 
 Follow the following steps to import the app into N4JS IDE.
 
-Step 1:: Download the link:https://www.eclipse.org/n4js/downloads.html[latest N4JS IDE] for your operating system.
+Step 1::
+Download the latest N4JS IDE from the link:https://www.eclipse.org/n4js/downloads.html[N4JS Download Page] for your operating system.
 
-Step 2:: The project is already an Eclipse project with the `.project` file in the root `chess-react` folder.
+Step 2::
+The project is already an Eclipse project with the `.project` file in the root `chess-react` folder.
 Hence, you can simply import it into the N4JS IDE workspace via `File => Import => Existing Projects into Workspace`.
 The IDE may complain that npm dependencies declared in `package.json` are missing.
 Use the quickfix `run npm/yarn in this project` to fix this issue.
-
++
 Alternativily, the following command can be executed in the root folder of the project `chess-react` to install all dependencies:
-
++
 [source,bash]
 ----
 npm install
 ----
 
 
-Step 3:: In the N4JS IDE, open the library manager (N4JS IDE => Preferences... => N4JS => N4JS External Libraries) and click on the button `Re-Build node_modules`.
 
-Step 4:: Clean & Build the project. After this step, the project has no compilation errors anymore.
+
+Step 3::
+In the N4JS IDE, open the library manager (N4JS IDE => Preferences... => N4JS => N4JS External Libraries) and click on the button `Re-Build node_modules`.
+
+Step 4::
+Clean & Build the project. After this step, the project has no compilation errors anymore.
 
 Now, the folder `src-gen` should have been created and populated with `.js` files of the project.
 The `.js` files will be used in the next step by webpack.
+# end::DevSetup[] 
 
 
+# tag::CreateApp[]
 == Create the application
+
 
 The `package.json` defines a script `build` to run webpack and create the application `chess-app.js`.
 Run it with:
@@ -52,5 +61,5 @@ To start the web server, run:
 ----
 npm start
 ----
-
+# end::CreateApp[]
 
