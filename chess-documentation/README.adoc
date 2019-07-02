@@ -5,7 +5,7 @@ This folder contains the tutorials for the link:../chess-react/README.adoc[React
 The tutorial is hosted in the tutorial section of the link:https://www.eclipse.org/n4js/userguides/index.html#_tutorials[N4JS webpage].
 
 
-= Build the Chess tutorial pages
+== Build the Chess tutorial pages
 
 We generate a tutorial page from `n4js-tutorial-chess.adoc` and `n4js-tutorial-chess-redux.adoc` located in the `doc` folder.
 The NPM script called `build-tutorial.sh` that can be used to build the tutorial page.
