@@ -1,5 +1,6 @@
 This project demonstrates how to develop a chess game application using link:https://www.eclipse.org/n4js/[N4JS] and link:https://reactjs.org/[React].
-The link:../chess-documentation/README.adoc[Documentation] provides an in-depth tutorial.
+
+The tutorial is hosted in the tutorial section of the link:https://www.eclipse.org/n4js/userguides/index.html#_tutorials[N4JS webpage].
 
 
 == Run the application

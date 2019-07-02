@@ -2,6 +2,9 @@ The chess projects demonstrate how to develop a chess game application using lin
 This folder contains the tutorials for the link:../chess-react/README.adoc[React] and link:../chess-react-redux/README.adoc[React+Redux] projects.
 
 
+The tutorial is hosted in the tutorial section of the link:https://www.eclipse.org/n4js/userguides/index.html#_tutorials[N4JS webpage].
+
+
 = Build the Chess tutorial pages
 
 We generate a tutorial page from `n4js-tutorial-chess.adoc` and `n4js-tutorial-chess-redux.adoc` located in the `doc` folder.

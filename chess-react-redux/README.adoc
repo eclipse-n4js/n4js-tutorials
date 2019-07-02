@@ -1,6 +1,8 @@
-This project is an extended version of the link:../chess-react/README.adoc[chess-react project].
+This project is an extended version of the link:../chess-react/[chess-react project].
 It demonstrates how to develop a chess game application using link:https://www.eclipse.org/n4js/[N4JS], link:https://reactjs.org/[React], and link:https://redux.js.org/[Redux].
 Both of the projects are transpiled and run in the same manner.
 
-The link:../chess-documentation/README.adoc[Documentation] provides an in-depth tutorial.
+Please refer to the link:../chess-react/README.adoc[README of chess-react project] for setup details.
 
+
+The tutorial is hosted in the tutorial section of the link:https://www.eclipse.org/n4js/userguides/index.html#_tutorials[N4JS webpage].

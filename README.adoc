@@ -18,6 +18,7 @@ For more information, see https://www.eclipse.org/n4js[Eclipse N4JS project page
 
 
 This repository contains the following tutorials:
+
 - Chess game using React (Folder link:./chess-react[chess-react])
 - Chess game using React+Redux (Folder link:./chess-react-redux[chess-react-redux])
 
