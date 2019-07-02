@@ -1,0 +1,45 @@
+import {Piece} from "Piece";
+import * as React from "react";
+
+/**
+ * Square props
+ */
+export public interface ~SquareProps extends React.ComponentProps {
+	public isWhite: boolean;
+    public piece: Piece;
+    public onClick: {function(): void}
+    public isPicked: boolean;
+    public isValidDestination: boolean;
+}
+
+/**
+ * Board square styles
+ */
+const boardSquareStyles = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
+  height: '100%',
+  fontSize: '5vw'
+}
+
+/**
+ * Square React component
+ */
+export public function Square(props: SquareProps): React.Element<?> {
+    let backgroundColor: string = props.isWhite? '#EADAB9' : '#C2A482';
+    // Special square highlighting a picked square or valid destination?
+    if (props.isPicked) {
+	    backgroundColor = 'lime';    	
+    } else if (props.isValidDestination) {
+	    backgroundColor = 'yellow';    	
+    }
+
+    return (
+        <div style={Object.assign({}, boardSquareStyles, {backgroundColor: backgroundColor})} 
+            onClick={props.onClick}>
+            {props.piece}
+	    </div>
+	  );
+}

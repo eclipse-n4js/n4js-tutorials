@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="141 151 698 275" width="698" height="275">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-9 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M -8 0 L 0 3 L 0 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.10.2 
+    <dc:date>2019-04-03 12:15:14 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-dasharray="none" stroke-opacity="1" fill="none" fill-opacity="1" stroke="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="141" y="151" width="698" height="275"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <path d="M 682.525 261 L 810.975 261 C 826.1688 261 838.5 273.768 838.5 289.5 C 838.5 305.232 826.1688 318 810.975 318 L 682.525 318 C 667.3312 318 655 305.232 655 289.5 C 655 273.768 667.3312 261 682.525 261 Z" fill="#c0c0ff"/>
+        <path d="M 682.525 261 L 810.975 261 C 826.1688 261 838.5 273.768 838.5 289.5 C 838.5 305.232 826.1688 318 810.975 318 L 682.525 318 C 667.3312 318 655 305.232 655 289.5 C 655 273.768 667.3312 261 682.525 261 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(678.35 281)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="11.217" y="13">React Component</tspan>
+        </text>
+      </g>
+      <g id="Graphic_3">
+        <path d="M 436.9981 368 L 565.4481 368 C 580.6419 368 592.9731 380.768 592.9731 396.5 C 592.9731 412.232 580.6419 425 565.4481 425 L 436.9981 425 C 421.8043 425 409.4731 412.232 409.4731 396.5 C 409.4731 380.768 421.8043 368 436.9981 368 Z" fill="white"/>
+        <path d="M 436.9981 368 L 565.4481 368 C 580.6419 368 592.9731 380.768 592.9731 396.5 C 592.9731 412.232 580.6419 425 565.4481 425 L 436.9981 425 C 421.8043 425 409.4731 412.232 409.4731 396.5 C 409.4731 380.768 421.8043 368 436.9981 368 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(432.8231 388)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="25.749" y="13">Create Action</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <path d="M 169.025 261 L 297.475 261 C 312.6688 261 325 273.768 325 289.5 C 325 305.232 312.6688 318 297.475 318 L 169.025 318 C 153.8312 318 141.5 305.232 141.5 289.5 C 141.5 273.768 153.8312 261 169.025 261 Z" fill="#ffc0c0"/>
+        <path d="M 169.025 261 L 297.475 261 C 312.6688 261 325 273.768 325 289.5 C 325 305.232 312.6688 318 297.475 318 L 169.025 318 C 153.8312 318 141.5 305.232 141.5 289.5 C 141.5 273.768 153.8312 261 169.025 261 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(164.85 281)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="29.508" y="13">Redux Store</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <path d="M 436.9981 151.5 L 565.4481 151.5 C 580.6419 151.5 592.9731 164.268 592.9731 180 C 592.9731 195.732 580.6419 208.5 565.4481 208.5 L 436.9981 208.5 C 421.8043 208.5 409.4731 195.732 409.4731 180 C 409.4731 164.268 421.8043 151.5 436.9981 151.5 Z" fill="white"/>
+        <path d="M 436.9981 151.5 L 565.4481 151.5 C 580.6419 151.5 592.9731 164.268 592.9731 180 C 592.9731 195.732 580.6419 208.5 565.4481 208.5 L 436.9981 208.5 C 421.8043 208.5 409.4731 195.732 409.4731 180 C 409.4731 164.268 421.8043 151.5 436.9981 151.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(432.8231 171.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="41.954" y="13">Reducer</tspan>
+        </text>
+      </g>
+      <g id="Line_6">
+        <path d="M 746.75 318 L 746.75 376.64943 C 746.75 387.69513 737.7957 396.64943 726.75 396.64943 C 726.7399 396.64943 726.72985 396.64943 726.7198 396.6494 L 627.8882 396.5 C 627.87816 396.5 627.8681 396.5 627.858 396.5 L 602.8731 396.5" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_7">
+        <path d="M 409.4731 396.5 L 253.03307 396.5 C 241.98737 396.5 233.03307 387.5457 233.03307 376.5 C 233.03307 376.4385 233.03335 376.37696 233.03392 376.31545 L 233.24915 352.99227 C 233.24972 352.93076 233.25 352.86924 233.25 352.80772 L 233.25 327.9" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_8">
+        <path d="M 233.25 261 L 233.25 200.49313 C 233.25 189.44743 242.2043 180.49313 253.25 180.49313 L 296.27823 180.49313 C 296.32025 180.49313 296.36227 180.493 296.4043 180.49273 L 374.5101 180.0004 C 374.5521 180.00013 374.59413 180 374.63615 180 L 399.5731 180" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_11">
+        <path d="M 746.75 251.1 L 746.75 199.74273 C 746.75 188.69704 737.7957 179.74273 726.75 179.74273 L 679.256 179.74273 C 679.228 179.74273 679.2 179.7428 679.172 179.7429 L 618.0151 179.99982 C 617.9871 179.99994 617.9591 180 617.9311 180 L 592.9731 180" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_12">
+        <text transform="translate(613 363)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="3.718" y="11">User interaction, e.g. </tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="33.94" y="25.336">click, edit</tspan>
+        </text>
+      </g>
+      <g id="Graphic_14">
+        <text transform="translate(266 373)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="16.828" y="11">dispatch(action)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_15">
+        <text transform="translate(252 188.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="2.714" y="11">reduce(action, oldState)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_16">
+        <text transform="translate(606 188.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="20.948" y="11">render(newState)</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

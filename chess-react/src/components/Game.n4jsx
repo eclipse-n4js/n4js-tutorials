@@ -1,0 +1,758 @@
+import {Coordinate} from "Coordinate";
+import {Move} from "Move";
+import {Piece} from "Piece";
+import {Board} from "components/Board";
+import * as React from "react";
+
+/**
+ * A history snapshot
+ */
+interface ~Snapshot {
+    public squares: Array<Array<Piece>>;
+    public lastMoves: Array<Move>;
+
+    public whiteKingMoved: boolean;
+    public leftWhiteRookMoved: boolean;
+    public rightWhiteRookMoved: boolean;
+
+    public blackKingMoved: boolean;
+    public leftBlackRookMoved: boolean;
+    public rightBlackRookMoved: boolean;
+}
+
+/**
+ * Game state
+ */
+interface ~GameState {
+    public history: Array<Snapshot>;
+    public stepNumber: int;
+    public whiteIsNext: boolean;
+    public pickedSquare: Coordinate;
+    public validDestinations: Array<Coordinate>;
+}
+
+
+/**
+ * Game React component (root)
+ */
+export default public class Game extends React.Component<React.ComponentProps, GameState> {
+
+    public constructor(props: React.ComponentProps) {
+        super(props);
+//        const initialSquares: Array<Array<Piece>> = [
+//        	[null, null, null,null,null,null,null,null],
+//        	[null,null,null,null,null,null,null,null],
+//        	[null, null,null,null,null,Piece.WHITE_BISHOP,null,null],
+//        	[null, null,null,null,null,null,null,Piece.WHITE_KNIGHT],
+//        	[null, null,null,null,null,Piece.BLACK_PAWN,null,null],
+//        	[null, null,null,null,null,null,null,null],
+//        	[null,null,null,null,null,null,null,null],
+//        	[null,null,null,null,null,null,null,null]
+//        ];
+        const initialSquares: Array<Array<Piece>> = [
+            [Piece.WHITE_ROOK, Piece.WHITE_KNIGHT, Piece.WHITE_BISHOP,Piece.WHITE_QUEEN,Piece.WHITE_KING,Piece.WHITE_BISHOP,Piece.WHITE_KNIGHT,Piece.WHITE_ROOK],
+            [Piece.WHITE_PAWN, Piece.WHITE_PAWN, Piece.WHITE_PAWN, Piece.WHITE_PAWN, Piece.WHITE_PAWN, Piece.WHITE_PAWN, Piece.WHITE_PAWN, Piece.WHITE_PAWN],
+            [null, null,null,null,null,null,null,null],
+            [null, null,null,null,null,null,null,null],
+            [null, null,null,null,null,null,null,null],
+            [null, null,null,null,null,null,null,null],
+            [Piece.BLACK_PAWN, Piece.BLACK_PAWN, Piece.BLACK_PAWN, Piece.BLACK_PAWN, Piece.BLACK_PAWN, Piece.BLACK_PAWN, Piece.BLACK_PAWN, Piece.BLACK_PAWN],
+            [Piece.BLACK_ROOK, Piece.BLACK_KNIGHT, Piece.BLACK_BISHOP,Piece.BLACK_QUEEN,Piece.BLACK_KING,Piece.BLACK_BISHOP,Piece.BLACK_KNIGHT,Piece.BLACK_ROOK]
+        ];
+
+    // Initial state
+    this.state = {
+        history: [{
+              squares: initialSquares,
+              lastMoves: new Array<Move>(),
+              whiteKingMoved: false,
+              leftWhiteRookMoved: false,
+              rightWhiteRookMoved: false,
+              blackKingMoved: false,
+              leftBlackRookMoved: false,
+              rightBlackRookMoved: false,
+            }],
+            stepNumber: 0,
+            whiteIsNext: true,
+            pickedSquare: null,
+            validDestinations: new Array<Coordinate>()
+        };
+    }
+
+    /**
+     * Handle selected event
+     */
+    private handleClick(selectedPos: Coordinate) {
+        const row = selectedPos.row;
+        const col = selectedPos.col;
+
+        const history = this.state.history.slice(0, this.state.stepNumber + 1);
+        const current = history[history.length - 1];
+        const pickedSquare = this.state.pickedSquare;
+        let squares: Array<Array<Piece>> = current.squares;
+
+        // Nothing to do if there is already a winner
+        if (this.calculateWinner(squares)) {
+            return;
+        }
+
+        const currentpiece = squares[row][col];
+
+        if (((this.isWhitepiece(currentpiece) && this.state.whiteIsNext)) ||
+           ((this.isBlackpiece(currentpiece) && !this.state.whiteIsNext))) {
+            // piece has been picked by the player in turn 
+            const validDestinations: Array<Coordinate> = this.calculateValidDestinations(squares, currentpiece, selectedPos);
+            this.setState({
+                pickedSquare: selectedPos,
+                validDestinations: validDestinations
+            });
+            return;
+        }
+
+        if (!pickedSquare) {
+            return;
+        }
+
+        const attemptedMove = new Move({piece: squares[pickedSquare.row][pickedSquare.col], fromPos: pickedSquare, toPos: selectedPos});
+        if (this.isValidMove(squares, attemptedMove)) {
+            // The attempted move is a valid one
+            const {squares: newSquares, moves} = this.move(attemptedMove);
+
+            let whiteKingMoved = current.whiteKingMoved;
+            let leftWhiteRookMoved = current.leftWhiteRookMoved;
+            let rightWhiteRookMoved = current.rightWhiteRookMoved;
+            let blackKingMoved = current.blackKingMoved;
+            let leftBlackRookMoved = current.leftBlackRookMoved;
+            let rightBlackRookMoved = current.rightBlackRookMoved;
+        
+            if (this.isWhitepiece(attemptedMove.piece)) {
+                whiteKingMoved = whiteKingMoved || (attemptedMove.piece == Piece.WHITE_KING);
+                leftWhiteRookMoved = leftWhiteRookMoved || ((attemptedMove.piece == Piece.WHITE_ROOK) && pickedSquare.col == 0); 
+                rightWhiteRookMoved = rightWhiteRookMoved || ((attemptedMove.piece == Piece.WHITE_ROOK) && pickedSquare.col == 7);
+            } else {
+                blackKingMoved = blackKingMoved || (attemptedMove.piece == Piece.BLACK_KING);
+                leftBlackRookMoved = leftBlackRookMoved || ((attemptedMove.piece == Piece.BLACK_ROOK) && pickedSquare.col == 0); 
+                rightBlackRookMoved = rightBlackRookMoved || ((attemptedMove.piece == Piece.BLACK_ROOK) && pickedSquare.col == 7);
+            }
+ 
+            this.setState({
+                history: history.concat([
+                    {
+                        squares: newSquares,
+                        lastMoves: moves,
+                        whiteKingMoved: whiteKingMoved,
+                        leftWhiteRookMoved: leftWhiteRookMoved,
+                        rightWhiteRookMoved: rightWhiteRookMoved,
+                        
+                        blackKingMoved: blackKingMoved,
+                        leftBlackRookMoved: leftBlackRookMoved,
+                        rightBlackRookMoved: rightBlackRookMoved
+                    } 
+                ]),
+                stepNumber: history.length,
+                whiteIsNext: !this.state.whiteIsNext,
+                pickedSquare: null,
+                validDestinations: new Array<Coordinate>,
+             });
+      } else {
+          // Otherwise, reset picked square and valid destinations
+          this.setState({
+            pickedSquare: null,
+            validDestinations: new Array<Coordinate>
+          });
+      }
+    }
+
+   /**
+    * Go to a given step in the history
+    */
+    private goToStep(step: number) {
+        this.setState({
+          stepNumber: step,
+          whiteIsNext: (step % 2) === 0,
+          pickedSquare: null,
+          validDestinations: new Array<Coordinate>()
+        });
+    }
+
+    private getAllPiecesSameColor(squares: Array<Array<Piece>>, isWhite: boolean): Array<~Object with {piece: Piece, pos: Coordinate}> {
+        const result = new Array<~Object with {piece: Piece, pos: Coordinate}>();
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                if ((isWhite && this.isWhitepiece(squares[row][col])) ||
+                    (!isWhite && this.isBlackpiece(squares[row][col]))) {
+                       result.push({piece: squares[row][col], pos: new Coordinate({row: row, col: col})});
+                   }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Missing forAll for collection/array
+     */
+    private <T> forAll(a: Array<T>, predicate: {function(T): boolean}): boolean {
+        return a.reduce((acc, elem) => acc && predicate(elem), true);
+    }
+
+    /**
+     * Calculate the winner
+     */
+  private calculateWinner(squares: Array<Array<Piece>>): string {
+        const isWhite = this.state.whiteIsNext;
+        const allPieces = this.getAllPiecesSameColor(squares, isWhite);
+        // Checkmate if all pieces have no valid destinations
+        const checkMate = 
+            this.forAll(allPieces, 
+                (p) => this.calculateValidDestinations(squares, p.piece, p.pos).length == 0
+            );
+        if (checkMate) {
+            return isWhite? 'Black': 'White';
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Calculates all valid destinations for a given piece at the given position
+     */
+    private calculateValidDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const result = this.calculateAttackedDestinations(squares, piece, pos);
+        const isWhite = this.isWhitepiece(piece);
+
+        // Special case: Pawns can move forwards in addition to attacking positions
+        if (piece == Piece.WHITE_PAWN || piece == Piece.BLACK_PAWN) {
+            if (isWhite && (pos.row < 7)) {
+                const nextPos = new Coordinate({row: pos.row + 1, col: pos.col});
+                if (!squares[nextPos.row][nextPos.col]) {
+                    result.push(nextPos);
+                }
+                
+                if (pos.row <= 1) {
+                    const nextNextPos = new Coordinate({row: pos.row + 2, col: pos.col});
+                    if (!squares[nextPos.row][nextPos.col] && !squares[nextNextPos.row][nextNextPos.col]) {
+                        result.push(nextNextPos);
+                    }
+                }
+            } else if (!isWhite && (pos.row > 0)) {
+                const nextPos = new Coordinate({row: pos.row -1, col: pos.col});
+                if (!squares[nextPos.row][nextPos.col]) {
+                    result.push(nextPos);
+                }
+                if (pos.row >= 6) {
+                    const nextNextPos = new Coordinate({row: pos.row - 2, col: pos.col});
+                    if (!squares[nextPos.row][nextPos.col] && !squares[nextNextPos.row][nextNextPos.col]) {
+                        result.push(nextNextPos);
+                    }
+                }
+            }
+        }
+
+        const current = this.state.history[this.state.stepNumber];
+        // Special case: Kings can castle in addition to attacking positions
+        if ((piece == Piece.WHITE_KING) && isWhite && !current.whiteKingMoved) {
+            // White castling to the left
+            if (!current.leftWhiteRookMoved && !squares[pos.row][pos.col-1] && !squares[pos.row][pos.col-2] && !squares[pos.row][pos.col-3]) {
+                result.push(new Coordinate({row: pos.row, col: pos.col - 2}));                
+            }
+            // White castling to the right
+            if (!current.rightWhiteRookMoved && !squares[pos.row][pos.col+1] && !squares[pos.row][pos.col+2]) {
+                result.push(new Coordinate({row: pos.row, col: pos.col + 2}));                
+            }
+        } else if ((piece == Piece.BLACK_KING) && !isWhite && !current.blackKingMoved) {
+        	// White castling to the left
+            if (!current.leftBlackRookMoved && !squares[pos.row][pos.col-1] && !squares[pos.row][pos.col-2] && !squares[pos.row][pos.col-3]) {
+                result.push(new Coordinate({row: pos.row, col: pos.col - 2}));                
+            }
+            // White castling to the right
+            if (!current.rightBlackRookMoved && !squares[pos.row][pos.col+1] && !squares[pos.row][pos.col+2]) {
+                result.push(new Coordinate({row: pos.row, col: pos.col + 2}));                
+            }
+        }
+        
+        // A move cannot cause the king to be in check
+        return result.filter(toPos => !this.isKingInCheckIfMove(new Move({piece : piece, fromPos: pos, toPos: toPos})));
+    }
+
+    /**
+     * Checks if a given move is valid
+     */
+    private isValidMove(squares: Array<Array<Piece>>, move: Move): boolean {
+        // A move is valid if the destination is one of the valid destinations.          
+        const validDestinations = this.calculateValidDestinations(squares, move.piece, move.fromPos);
+        return validDestinations.findIndex((pos) => pos.equals(move.toPos)) >= 0;
+    }
+ 
+    /**
+     * Is a coordinate inside the board?
+     */
+    private isInsideBoard(coord: Coordinate): boolean {
+        return (0 <= coord.row) && (coord.row < 8) && (0 <= coord.col) && (coord.col < 8);
+    }
+    
+    private calculateKnightAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const deltas: Array<Array<int>> = [[-1,-2], [-2,-1],[-2,1],[-1,2], [1,2], [2,1], [2,-1], [1,-2]];
+        const result = (deltas.map((delta) => new Coordinate({row: pos.row + delta[0], col: pos.col + delta[1]})) as Array<Coordinate>)
+                              .filter(coord => this.isInsideBoard(coord) && !this.isPositionOccupiedBypieceSameColor(squares, piece, coord));
+        return result;
+    }
+  
+    private calculateRookAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const row = pos.row;
+        const col = pos.col;
+        const result: Array<Coordinate> = new Array<Coordinate>();
+
+        const deltas = [[-1,0], [1,0],[0,-1],[0,+1]]; // NORTH, EAST, SOUTH, WEST
+        // Iterate 4 directions
+        for (let delta of deltas) {
+            let newPos = new Coordinate({row: row + delta[0], col: col + delta[1]});
+            while (this.isInsideBoard(newPos)) {
+                if (!squares[newPos.row][newPos.col]) {
+                    result.push(newPos);
+                } else {
+                    // Square is occupied
+                    if (this.isPositionOccupiedBypieceSameColor(squares, piece, newPos)) {
+                        break;
+                    }
+                    
+                    if (this.isPositionOccupiedBypieceOtherColor(squares, piece, newPos)) {
+                        result.push(newPos);
+                        break;    
+                    }
+                }
+                newPos = new Coordinate({row: newPos.row + delta[0], col: newPos.col + delta[1]});
+            }
+        }
+        return result;
+    }
+
+    private calculateBishopAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const row = pos.row;
+        const col = pos.col;
+        const result: Array<Coordinate> = new Array<Coordinate>();
+
+        const deltas = [[-1,-1], [-1,1], [1,1], [1,-1]]; // NORTH WEST, NORTH EAST, SOUTH EAST, SOUTH WEST
+        // Iterate 4 directions
+        for (let delta of deltas) {
+            let newPos = new Coordinate({row: row + delta[0], col: col + delta[1]});
+            while (this.isInsideBoard(newPos)) {
+                if (!squares[newPos.row][newPos.col]) {
+                    result.push(newPos);
+                } else {
+                    // Square is occupied
+                    if (this.isPositionOccupiedBypieceSameColor(squares, piece, newPos)) {
+                        break;
+                    }
+                    
+                    if (this.isPositionOccupiedBypieceOtherColor(squares, piece, newPos)) {
+                        result.push(newPos);
+                        break;    
+                    }
+                }
+                newPos = new Coordinate({row: newPos.row + delta[0], col: newPos.col + delta[1]});
+            }
+        }
+        return result;
+    }
+
+    private calculateQueenAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const isWhite = this.isWhitepiece(piece);
+        // Queen's attack destinations is union of rook's and bishop's
+        if (isWhite) {
+            return this.calculateRookAttackingDestinations(squares, Piece.WHITE_ROOK, pos)
+                         .concat(this.calculateBishopAttackingDestinations(squares, Piece.WHITE_BISHOP, pos));
+        } else {
+            return this.calculateRookAttackingDestinations(squares, Piece.BLACK_ROOK, pos)
+                         .concat(this.calculateBishopAttackingDestinations(squares, Piece.BLACK_BISHOP, pos));
+        }
+    }
+   
+    private calculateKingAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const deltas = [[-1,-1], [-1,0], [-1,1], [0, 1], [1,1], [1,0], [1,-1],[0,-1]]; // NORTH WEST, WEST, NORTH EAST, EAST, SOUTH EAST, SOUTH, SOUTH WEST, WEST
+        const result = (deltas.map((delta) => new Coordinate({row: pos.row + delta[0], col: pos.col + delta[1]})) as Array<Coordinate>)
+                              .filter(coord => this.isInsideBoard(coord) && !this.isPositionOccupiedBypieceSameColor(squares, piece, coord));
+        return result;        
+    }
+
+    private calculatePawnAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const result: Array<Coordinate> = new Array<Coordinate>();
+        const isWhite = this.isWhitepiece(piece);
+        
+        if (isWhite && (pos.row < 7)) {
+            for (let dc of [1,-1]) {
+                const attackPos = new Coordinate({row: pos.row + 1, col: pos.col + dc});
+                if (this.isInsideBoard(attackPos) && this.isPositionOccupiedBypieceOtherColor(squares, piece, attackPos)) {
+                    result.push(attackPos);
+                }
+            }          
+        } else if (!isWhite && (pos.row > 0)) {
+            for (let dc of [1,-1]) {
+                const attackPos = new Coordinate({row: pos.row - 1, col: pos.col + dc});
+                if (this.isInsideBoard(attackPos) && this.isPositionOccupiedBypieceOtherColor(squares, piece, attackPos)) {
+                    result.push(attackPos);
+                }
+            }
+        }
+        return result;    
+    }
+
+    /**
+     * Calculate all destinations attacked by given piece
+     */
+    private calculateAttackedDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        let result: Array<Coordinate> = new Array<Coordinate>();
+        switch (piece) {
+            case (Piece.WHITE_KNIGHT):
+            case (Piece.BLACK_KNIGHT):
+                result = this.calculateKnightAttackingDestinations(squares, piece, pos);
+                break;
+
+            case (Piece.WHITE_ROOK):
+            case (Piece.BLACK_ROOK):
+                result = this.calculateRookAttackingDestinations(squares, piece, pos);
+                break;
+            
+            case (Piece.WHITE_BISHOP):
+            case (Piece.BLACK_BISHOP):
+                result = this.calculateBishopAttackingDestinations(squares, piece, pos);
+                break;
+               
+            case (Piece.WHITE_QUEEN):
+            case (Piece.BLACK_QUEEN):
+                result = this.calculateQueenAttackingDestinations(squares, piece, pos);
+                break;
+
+            case (Piece.WHITE_KING):
+            case (Piece.BLACK_KING):
+                result = this.calculateKingAttackingDestinations(squares, piece, pos);
+                break;
+               
+            case (Piece.WHITE_KING):
+            case (Piece.BLACK_KING):
+                result = this.calculateKingAttackingDestinations(squares, piece, pos);
+                break;
+                
+            case (Piece.WHITE_PAWN):
+            case (Piece.BLACK_PAWN):
+                result = this.calculatePawnAttackingDestinations(squares, piece, pos);
+                break;
+                
+        }
+        return result;
+    }
+
+    /**
+     * Check whether the king is in check if the move is made
+     */
+    private isKingInCheckIfMove(attemptedMove: Move) {
+         // Check if the move causes the king to be in check
+        const {squares: changedSquares} = this.move(attemptedMove);
+        const isWhite = this.isWhitepiece(attemptedMove.piece);
+        const kingPos = this.getKingPosition(changedSquares, isWhite);
+        if (!kingPos) {
+            return false;
+        }
+        return this.isKingInCheck(changedSquares, isWhite? Piece.WHITE_KING : Piece.BLACK_KING, kingPos)        
+    }
+
+    /**
+     * Checks if the given king is in check.
+     */
+    private isKingInCheck(squares: Array<Array<Piece>>, king: Piece, pos: Coordinate): boolean {
+        if ((king != Piece.WHITE_KING) && (king != Piece.BLACK_KING)) {
+            throw "The input piece is not a king";
+        }
+        const isWhiteKing: boolean = king == Piece.WHITE_KING;
+        // Union of all attacking destinations of opponent pieces
+        const opponentpieces = isWhiteKing? this.getPiecesOfSameColor(squares, false): this.getPiecesOfSameColor(squares, true);
+        let result = new Array<Coordinate>();
+        for (let opponentpiece of opponentpieces) {
+           const r: Array<Coordinate> = this.calculateAttackedDestinations(squares, opponentpiece.piece, opponentpiece.pos);
+           result = result.concat(r);
+        }
+        const b = result.find((p) => p.equals(pos)) ? true: false;
+        return b;
+    }
+
+    /**
+     *  Get all pieces of the same color
+     */
+    private getPiecesOfSameColor(squares: Array<Array<Piece>>, white: boolean): Array<~Object with {piece: Piece, pos: Coordinate}> {
+        const result = new Array<~Object with {piece: Piece, pos: Coordinate}>();
+        for (let i = 0; i < squares.length; i++) {
+            for (let j = 0; j < squares[i].length; j++) {
+                if (white? this.isWhitepiece(squares[i][j]): this.isBlackpiece(squares[i][j])) {
+                    result.push({ piece:  squares[i][j], pos: new Coordinate({ row: i, col: j })});                    
+                }
+            }
+        }
+        return result;
+    }
+
+    private getKingPosition(squares: Array<Array<Piece>>, isWhite: boolean): Coordinate {
+        for (let i = 0; i < squares.length; i++) {
+            for (let j = 0; j < squares[i].length; j++) {
+                if (isWhite? squares[i][j] == Piece.WHITE_KING : squares[i][j] == Piece.BLACK_KING) {
+                    return new Coordinate({row: i, col: j});                        
+                }
+            }
+        }
+        return null;
+    }
+
+    private isPositionOccupiedBypieceSameColor(squares: Array<Array<Piece>>, piece: Piece, newPos: Coordinate) {
+    	const isWhite = this.isWhitepiece(piece);
+        if (isWhite && this.isWhitepiece(squares[newPos.row][newPos.col])) {
+            return true;
+        }
+        if (!isWhite && this.isBlackpiece(squares[newPos.row][newPos.col])) {
+            return true
+        }
+        return false;
+    }
+
+    private isPositionOccupiedBypieceOtherColor(squares: Array<Array<Piece>>, piece: Piece, newPos: Coordinate) {
+        const isWhite = this.isWhitepiece(piece);
+        if (isWhite && this.isBlackpiece(squares[newPos.row][newPos.col])) {
+            return true;
+        }
+        if (!isWhite && this.isWhitepiece(squares[newPos.row][newPos.col])) {
+            return true
+        }
+        return false;
+    }
+  
+    /**
+     * Returns the current snapshop
+     */
+    private getCurrentSnapshot(): Snapshot {
+        const history = this.state.history;
+        return history[this.state.stepNumber]; 
+    }  
+
+    /**
+     * Execute an attempted move and return the updated squares as well as the real moves (to handle castling case)
+     */
+    private move(attemptedMove: Move): ~Object with {squares: Array<Array<Piece>>, moves: Array<Move>} {
+        const piece = attemptedMove.piece;
+        const fromPos = attemptedMove.fromPos;
+        const toPos = attemptedMove.toPos;
+        
+        const currentSnapshot = this.getCurrentSnapshot();
+        const squares = currentSnapshot.squares; 
+        const newSquares: Array<Array<Piece>> = squares.map(rows => rows.slice());
+
+        const moves: Array<Move> = new Array<Move>();       
+        if (this.isCastlingMove(piece, fromPos, toPos)) {
+            // Move king
+            moves.push(new Move({
+                piece: piece,
+                fromPos: new Coordinate({ row: fromPos.row, col: fromPos.col}),
+                toPos: new Coordinate({ row: toPos.row, col: toPos.col})
+                })
+            );
+            newSquares[toPos.row][toPos.col] = piece;
+            newSquares[fromPos.row][fromPos.col] = null;
+
+            // Move rook
+            let rookFromPos: Coordinate;
+            let rookToPos: Coordinate;
+            if (piece == Piece.WHITE_KING) {
+                if (toPos.col < fromPos.col) {
+                    // White king castling to the left
+                    rookFromPos = new Coordinate({ row: 0, col: 0});
+                    rookToPos = new Coordinate({ row: 0, col: 3}); 
+                } else {
+                    // White king castling to the right
+                    rookFromPos = new Coordinate({ row: 0, col: 7});
+                    rookToPos = new Coordinate({ row: 0, col: 5});
+                    
+                }
+            } else {
+                if (toPos.col < fromPos.col) {
+                    // Black king castling to the left
+                    rookFromPos = new Coordinate({ row: 7, col: 0})
+                    rookToPos = new Coordinate({ row: 7, col: 3}) 
+                } else {
+                    rookFromPos = new Coordinate({ row: 7, col: 7});
+                    rookToPos = new Coordinate({ row: 7, col: 5});
+                }
+            }
+            moves.push(new Move({
+                piece: squares[rookFromPos.row][rookFromPos.col],
+                fromPos: rookFromPos,
+                toPos: rookToPos
+                })
+            );          
+            newSquares[rookToPos.row][rookToPos.col] = squares[rookFromPos.row][rookFromPos.col];
+            newSquares[rookFromPos.row][rookFromPos.col] = null;
+            
+        } else {
+            // Normal move
+            const piece = squares[fromPos.row][fromPos.col];
+            newSquares[toPos.row][toPos.col] = piece;
+            newSquares[fromPos.row][fromPos.col] = null;
+            moves.push(attemptedMove);
+        }
+        return {squares: newSquares, moves: moves};
+    }
+
+    /**
+     * Is castling move?
+     */
+    private isCastlingMove(piece: Piece, fromPos: Coordinate, toPos: Coordinate): boolean {
+        const currentSnapshot = this.getCurrentSnapshot();
+        
+        if (piece == Piece.WHITE_KING && !currentSnapshot.whiteKingMoved && Math.abs(toPos.col - fromPos.col) == 2) {
+            return true;
+        }
+
+        if (piece == Piece.BLACK_KING && !currentSnapshot.blackKingMoved && Math.abs(toPos.col - fromPos.col) == 2) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    private isLeftWhiteRook(piece: Piece, pos: Coordinate): boolean {
+        return (piece == Piece.WHITE_ROOK) && (pos.row == 0) && (pos.col == 0); 
+    }
+
+  private isWhitepiece(piece: Piece): boolean {
+  	switch (piece) {
+  		case Piece.WHITE_PAWN:
+  		case Piece.WHITE_ROOK:
+  		case Piece.WHITE_KNIGHT:
+  		case Piece.WHITE_BISHOP:
+  		case Piece.WHITE_QUEEN:
+  		case Piece.WHITE_KING:
+  			return true;
+  		default:
+  			return false;
+  	}
+  }
+  
+  private isBlackpiece(piece: Piece): boolean {
+  	switch (piece) {
+  		case Piece.BLACK_PAWN:
+  		case Piece.BLACK_ROOK:
+  		case Piece.BLACK_KNIGHT:
+  		case Piece.BLACK_BISHOP:
+  		case Piece.BLACK_QUEEN:
+  		case Piece.BLACK_KING:
+  			return true;
+  		default:
+  			return false;
+  	}
+  }
+
+  @Override
+  public render(): React.Element<?> {
+    const history = this.state.history;
+    const current = history[this.state.stepNumber];
+    const winner = this.calculateWinner(current.squares);
+
+    const moves = history.map((snapshot, step) => {
+      const actionLabel = step ? 'Go to move #' + step : 'Go to game start';
+      const tableCellStyles = {
+          textAlign: 'center',
+          verticalAlign: 'middle',
+          padding: '5px',
+          position: 'relative'
+      };
+
+      const actionButtonStyles = {
+        backgroundColor: 'green',
+        border: 'none',
+        color: 'white',
+        padding: '4px',
+        textAlign: 'center',
+        textDecoration: 'none',
+        display: 'inline-block'
+      }
+
+      return (
+          <React.Fragment>
+              <tr>
+                <td style={tableCellStyles}>{step}</td>
+                <td style={tableCellStyles}>{snapshot.lastMoves.join(',')}</td>
+                <td style={tableCellStyles}>
+                  <button style={actionButtonStyles} onClick={() => this.goToStep(step)}>{actionLabel}</button>
+                </td>
+              </tr>
+          </React.Fragment>
+      );
+    
+    });
+
+    let status;
+    if (winner) {
+      status = "Winner: " + winner;
+    } else {
+      status = "Next player: " + (this.state.whiteIsNext ? "White" : "Black");
+    }
+
+    const tableStyles = {
+        width: '100%'
+    }
+
+    const stepStyles = {
+        width: '10%'
+        
+    }
+
+    const moveStyles = {
+        width: '45%'
+    }
+
+    const actionStyles = {
+        width: '45%'
+    }
+
+    const gameStyles = {
+        display: 'flex',
+        flexDirection: 'row'
+    }
+    
+    const gameInfoStyles = {
+        marginTop: '20px',
+        marginLeft: '20px',
+        width: '40vw',
+        fontSize: '1.5vw'
+    }
+
+    /**
+     * Game board styles
+     */
+    const gameboardStyles = {
+        width: '60vw',
+        height: '60vw'
+    }
+
+    return (
+        <div style={gameStyles}>
+             <div style={gameboardStyles}>
+                <Board
+                    squares={current.squares}
+                    pickedSquare={this.state.pickedSquare}
+                    validDestinations={this.state.validDestinations}
+                    onClick={pos => this.handleClick(pos)}
+                  />
+             </div>
+
+             <div style={gameInfoStyles}>
+                 <div>{status}</div>
+                 <p/>
+                 <table style={tableStyles}>
+                   <tr>
+                       <th style={stepStyles}>{"Step"}</th>
+                       <th style={moveStyles}>{"Move"}</th>
+                       <th style={actionStyles}>{"Action"}</th>
+                   </tr>
+                   {moves}
+                 </table>
+              </div>
+        </div>
+    );
+  }
+}

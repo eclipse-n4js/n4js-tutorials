@@ -1,0 +1,25 @@
+import {ReduxAction} from "@n4jsd/redux";
+import {ReduxStore} from "@n4jsd/redux";
+import {applyMiddleware} from "lib/redux";
+import {createStore} from "@n4jsd/redux";
+import {reducer} from "reducers/reducer";
+import {StoreState} from "store/StoreState";
+
+/**
+ * Converts n4js objects into plain objects. The reason is: Redux actions must be plain objects.
+ */
+function n4jsActionsMiddleware(store) {
+	return (next: Function) => (action: ReduxAction) => {
+		let ctor: Object+ = action.constructor;
+		if (ctor.n4type) {
+			action = Object.assign({}, action) as ReduxAction;
+		}
+		return next(action);
+	}
+}
+
+// Redux store
+export public const store: ReduxStore<StoreState> =
+	createStore(reducer,
+	applyMiddleware(n4jsActionsMiddleware));
+	

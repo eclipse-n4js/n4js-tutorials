@@ -1,0 +1,48 @@
+{
+	"name": "chess-react-redux",
+	"author": "NumberFour AG",
+	"version": "0.0.1",
+	"scripts": {
+		"start": "webpack-dev-server",
+		"build": "webpack"
+	},
+	"n4js": {
+		"projectType": "library",
+		"vendorId": "org.eclipse.n4js",
+		"sources": {
+			"source": [
+				"src"
+			],
+			"test": [
+				"test"
+			]
+		},
+		"output": "src-gen"
+	},
+	"devDependencies": {
+		"n4js-mangelhaft-cli": "0.14.1",
+		"@n4jsd/react": "<=16.6.*",
+		"@n4jsd/react-dom": "<=16.6.*",
+		"@n4jsd/react-redux": "^6.0.0",
+		"@n4jsd/redux": "<=4.0.*",
+		"clean-webpack-plugin": "^2.0.1",
+		"html-webpack-plugin": "^3.2.0",
+		"webpack": "^4.29.6",
+		"webpack-cli": "^3.3.0",
+		"webpack-dev-server": "^3.2.1"
+	},
+	"dependencies": {
+		"n4js-runtime": "0.14.1",
+		"n4js-runtime-es2015": "0.14.1",
+		"n4js-runtime-html5": "0.14.1",
+		"org.eclipse.n4js.mangelhaft.assert": "0.14.1",
+		"org.eclipse.n4js.mangelhaft": "0.14.1",
+		"@zeit/next-css": "^1.0.1",
+		"debug": "~3.1.0",
+		"next": "^7.0.2",
+		"react": "^16.6.0",
+		"react-dom": "^16.6.0",
+		"react-redux": "^6.0.1",
+		"redux": "^4.0.1"
+	}
+}

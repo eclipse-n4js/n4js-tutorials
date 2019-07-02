@@ -1,0 +1,121 @@
+import {Coordinate} from "Coordinate";
+import {GameRules} from "GameRules";
+import {Move} from "Move";
+import {Piece} from "Piece";
+import {JumpToStepAction} from "actions/JumpToStepAction";
+import {PickSquareAction} from "actions/PickSquareAction";
+import {ReduxAction} from "@n4jsd/redux";
+import {StoreState} from "store/StoreState";
+import {initialState} from "store/StoreState";
+
+/**
+ * For this demo application, this reducer is interested in all actions.
+ */
+export public function reducer(state: StoreState, action: ReduxAction): StoreState {
+	if (!state) {
+		state = initialState;
+	}
+
+	if (!action) {
+		return state;
+	}
+
+	const { history, stepNumber, whiteIsNext } = state;
+	switch (action.type) {
+		case PickSquareAction.n4type.fqn: // This reducer is interested in this action
+		
+			const pickSquareAction = action as PickSquareAction;
+			const selectedPos = pickSquareAction.coord;
+
+			// Copy history
+			const newHistory = history.slice(0, stepNumber + 1);
+			const currentSnapshot = newHistory[newHistory.length - 1];
+			// Copy squares
+			const currentSquares: Array<Array<Piece>> = currentSnapshot.squares.map((row) => row.slice());
+
+			if (GameRules.calculateWinner(currentSnapshot, whiteIsNext)) {
+				// Game over, nothing to do anymore
+				return state;
+			}
+
+        	const currentPiece = currentSquares[selectedPos.row][selectedPos.col];
+	        if (((GameRules.isWhitepiece(currentPiece) && whiteIsNext)) ||
+	           ((GameRules.isBlackpiece(currentPiece) && !whiteIsNext))) {
+	            // piece has been picked by the player in turn 
+	            const validDestinations: Array<Coordinate> = GameRules.calculateValidDestinations(currentSnapshot, currentPiece, selectedPos);
+	            return {
+	            	history: newHistory,
+	            	stepNumber: stepNumber,
+	            	whiteIsNext: whiteIsNext,
+	                pickedSquare: selectedPos, // Update picked square position
+	                validDestinations: validDestinations
+	            };
+
+	        }
+			
+			if (state.pickedSquare) {
+	        	// A move has been attempted
+	        	const attemptedMove = new Move({piece: currentSquares[state.pickedSquare.row][state.pickedSquare.col], fromPos: state.pickedSquare, toPos: selectedPos});
+		        if (GameRules.isValidMove(currentSnapshot, attemptedMove)) {
+		            // The attempted move is a valid one
+		            const {squares: newSquares, moves} = GameRules.move(currentSnapshot, attemptedMove);
+		
+		            let whiteKingMoved = currentSnapshot.whiteKingMoved;
+		            let leftWhiteRookMoved = currentSnapshot.leftWhiteRookMoved;
+		            let rightWhiteRookMoved = currentSnapshot.rightWhiteRookMoved;
+		            let blackKingMoved = currentSnapshot.blackKingMoved;
+		            let leftBlackRookMoved = currentSnapshot.leftBlackRookMoved;
+		            let rightBlackRookMoved = currentSnapshot.rightBlackRookMoved;
+		        
+		            if (GameRules.isWhitepiece(attemptedMove.piece)) {
+		                whiteKingMoved = whiteKingMoved || (attemptedMove.piece == Piece.WHITE_KING);
+		                leftWhiteRookMoved = leftWhiteRookMoved || ((attemptedMove.piece == Piece.WHITE_ROOK) && state.pickedSquare.col == 0); 
+		                rightWhiteRookMoved = rightWhiteRookMoved || ((attemptedMove.piece == Piece.WHITE_ROOK) && state.pickedSquare.col == 7);
+		            } else {
+		                blackKingMoved = blackKingMoved || (attemptedMove.piece == Piece.BLACK_KING);
+		                leftBlackRookMoved = leftBlackRookMoved || ((attemptedMove.piece == Piece.BLACK_ROOK) && state.pickedSquare.col == 0); 
+		                rightBlackRookMoved = rightBlackRookMoved || ((attemptedMove.piece == Piece.BLACK_ROOK) && state.pickedSquare.col == 7);
+		            }
+		 
+		            return {
+		                history: newHistory.concat([
+		                    {
+		                        squares: newSquares,
+		                        lastMoves: moves,
+		                        whiteKingMoved: whiteKingMoved,
+		                        leftWhiteRookMoved: leftWhiteRookMoved,
+		                        rightWhiteRookMoved: rightWhiteRookMoved,
+		                        
+		                        blackKingMoved: blackKingMoved,
+		                        leftBlackRookMoved: leftBlackRookMoved,
+		                        rightBlackRookMoved: rightBlackRookMoved
+		                    } 
+		                ]),
+		                stepNumber: history.length,
+		                whiteIsNext: !whiteIsNext,
+		                pickedSquare: null,
+		                validDestinations: new Array<Coordinate>,
+		             };
+	        	}
+			}
+			break;
+
+		case JumpToStepAction.n4type.fqn: // This reducer is interested in this action
+			const jumpToStepAction = action as JumpToStepAction;
+			const step = jumpToStepAction.step;
+			
+			return {
+				history: history.slice(),
+				stepNumber: step,
+				whiteIsNext: step % 2 == 0,
+				pickedSquare: null,
+				validDestinations: new Array<Coordinate>,
+			};
+
+		default:
+			// Irrelevant action, return the old state
+			return state;
+	
+	}
+	return state;
+}
