@@ -4,14 +4,15 @@ The link:../chess-documentation/README.adoc[Documentation] provides an in-depth 
 
 == Run the application
 
-In the root folder of the project `n4js-tutorial-chess`, execute the following command to install all dependencies.
+In the root folder of the project `chess-react`, execute the following command to install all dependencies.
 
 [source,bash]
 ----
 npm install
 ----
 
-In `package.json`, a `start` script for starting the Webpack Dev Server serving the application is defined. To start the application, run
+In `package.json`, a `start` script for starting the Webpack Dev Server serving the application is defined.
+To start the application, run
 
 [source,bash]
 ----
@@ -22,29 +23,21 @@ The chess web app is served at port 8080.
 
 The final game will look approximately like this.
 
-image:images/chess-game-screenshot.png[Chess game screenshot]
+image:../chess-documentation/doc/images/chess-game-screenshot.png[Chess game screenshot]
+
 
 == Developer Setup
 
 Follow the following steps to import the app into N4JS IDE.
 
-Step 1: Download the link:https://projects.eclipse.org/projects/technology.n4js/downloads[latest N4JS IDE] for your operating system.
+Step 1: Download the link:https://www.eclipse.org/n4js/downloads.html[latest N4JS IDE] for your operating system.
 
-Step 2: The project is already an Eclipse project with the `.project` file in the root `n4js-tutorial-chess` folder. Hence, you can simply import it into the N4JS IDE workspace via `File => Import => Existing Projects into Workspace`.
+Step 2: The project is already an Eclipse project with the `.project` file in the root `chess-react` folder.
+Hence, you can simply import it into the N4JS IDE workspace via `File => Import => Existing Projects into Workspace`.
 
-The IDE may complain that npm dependencies declared in `package.json` are missing. Use the quickfix `run npm/yarn in this project` to fix this issue.
+The IDE may complain that npm dependencies declared in `package.json` are missing.
+Use the quickfix `run npm/yarn in this project` to fix this issue.
 
 Step 3: Open the library manager dialog and choose `Re-Build node_modules`.
 
 Step 4: Clean & Build the project. After this step, the project has no compilation errors anymore.
-
-== Build the Chess tutorial page
-
-We generate a tutorial page from `n4js-tutorial-chess.adoc` located in the `doc` folder. There is an NPM script called `build-tutorial` that can be used to build the tutorial page. In the root folder `n4js-tutorial-chess` , you can execute this script via
-
-[source,bash]
-----
-npm run build-tutorial
-----
-
-When executed, the script generates the tutorial page and stores all necessary `html`, `js` and image files in the  folder `doc/n4js-tutorial-chess`. You can integrate the chess tutorial into the official N4JS webpage by using this folder.

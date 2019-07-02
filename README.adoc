@@ -11,9 +11,16 @@ Contributors:
 
 = N4JS-Tutorials
 
-This repository contains tutorials for the Eclipse N4JS language and its Eclipse N4JS IDE. The https://www.eclipse.org/n4js[Eclipse N4JS language and IDE] enable high-quality JavaScript development for large Node.js projects. N4JS enriches ECMAScript with a static type system and provides extensive support for static validation hosted within a feature-rich IDE.
-
+This repository contains tutorials for the Eclipse N4JS language and its Eclipse N4JS IDE.
+The https://www.eclipse.org/n4js[Eclipse N4JS language and IDE] enables high-quality JavaScript development for large Node.js projects.
+N4JS enriches ECMAScript with a static type system and provides extensive support for static validation hosted within a feature-rich IDE.
 For more information, see https://www.eclipse.org/n4js[Eclipse N4JS project page] or https://github.com/eclipse/n4js[N4JS github pages].
+
+
+This repository contains the following tutorials:
+- Chess game using React (Folder link:./chess-react[chess-react])
+- Chess game using React+Redux (Folder link:./chess-react-redux[chess-react-redux])
+
 
 == Participate
 
