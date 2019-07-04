@@ -1,0 +1,4 @@
+import Game from "components/Game";
+import * as ReactDOM from 'react-dom';
+
+ReactDOM.render(<Game />, document.getElementById("chessAppMountPoint"));

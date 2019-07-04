@@ -1,0 +1,9 @@
+import {ReduxAction} from "@n4jsd/redux";
+
+/**
+ * Base Redux action. Its type is the FQN of the class
+ */
+export public class ~ActionBase implements ReduxAction {
+	 @Override
+     public type: string = this.constructor.n4type.fqn;
+}

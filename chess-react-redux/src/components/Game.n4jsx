@@ -1,0 +1,168 @@
+import {Coordinate} from "Coordinate";
+import {GameRules} from "GameRules";
+import {createJumpToStepAction} from "actions/JumpToStepAction";
+import {createPickSquareAction} from "actions/PickSquareAction";
+import {Board} from "components/Board";
+import {connect} from "@n4jsd/react-redux";
+import {ReduxAction} from "@n4jsd/redux";
+import {Snapshot} from "store/StoreState";
+import {StoreState} from "store/StoreState";
+import * as React from "react";
+
+/**
+ * Game component's props
+ */
+export public interface ~GameProps extends React.ComponentProps {
+ 	public history: Array<Snapshot>;
+    public stepNumber: int;
+    public whiteIsNext: boolean;
+    public pickedSquare: Coordinate;
+    public validDestinations: Array<Coordinate>;
+    public createPickSquareAction?: {function(Coordinate):void};
+    public jumpToStep?: {function(int):void}
+}
+
+/**
+ * Game React component (root)
+ */
+export default public class Game extends React.Component<GameProps, Object> {
+  
+  @Override
+  public render(): React.Element<?> {
+    const {history, createPickSquareAction, jumpToStep, whiteIsNext, stepNumber} = this.props;
+    
+    const currentSnapshot = history[stepNumber];
+	const winner = GameRules.calculateWinner(currentSnapshot, whiteIsNext);
+    const moves = history.map((snapshot, step) => {
+      const actionLabel = step ? 'Go to move #' + step : 'Go to game start';
+      const tableCellStyles = {
+          textAlign: 'center',
+          verticalAlign: 'middle',
+          padding: '5px',
+          position: 'relative'
+      };
+
+      const actionButtonStyles = {
+        backgroundColor: 'green',
+        border: 'none',
+        color: 'white',
+        padding: '4px',
+        textAlign: 'center',
+        textDecoration: 'none',
+        display: 'inline-block'
+      }
+
+      return (
+          <React.Fragment>
+              <tr>
+                <td style={tableCellStyles}>{step}</td>
+                <td style={tableCellStyles}>{snapshot.lastMoves.join(',')}</td>
+                <td style={tableCellStyles}>
+                  <button style={actionButtonStyles} onClick={() => jumpToStep(step)}>{actionLabel}</button>
+                </td>
+              </tr>
+          </React.Fragment>
+      );
+    
+    });
+
+    let status;
+    if (winner) {
+      status = "Winner: " + winner;
+    } else {
+      status = "Next player: " + (this.props.whiteIsNext ? "White" : "Black");
+    }
+
+    const tableStyles = {
+        width: '100%'
+    }
+
+    const stepStyles = {
+        width: '10%'
+        
+    }
+
+    const moveStyles = {
+        width: '45%'
+    }
+
+    const actionStyles = {
+        width: '45%'
+    }
+
+    const gameStyles = {
+        display: 'flex',
+        flexDirection: 'row'
+    }
+    
+    const gameInfoStyles = {
+        marginTop: '20px',
+        marginLeft: '20px',
+        width: '40vw',
+        fontSize: '1.5vw'
+    }
+
+    /**
+     * Game board styles
+     */
+    const gameboardStyles = {
+        width: '60vw',
+        height: '60vw'
+    }
+
+    return (
+        <div style={gameStyles}>
+             <div style={gameboardStyles}>
+                <Board
+                    squares={currentSnapshot.squares}
+                    pickedSquare={this.props.pickedSquare}
+                    validDestinations={this.props.validDestinations}
+                    onClick={pos => createPickSquareAction(pos)}
+                  />
+             </div>
+
+             <div style={gameInfoStyles}>
+                 <div>{status}</div>
+                 <p/>
+                 <table style={tableStyles}>
+                   <tr>
+                       <th style={stepStyles}>{"Step"}</th>
+                       <th style={moveStyles}>{"Move"}</th>
+                       <th style={actionStyles}>{"Action"}</th>
+                   </tr>
+                   {moves}
+                 </table>
+              </div>
+        </div>
+    );
+  }
+}
+
+/**
+ * Map Redux state to Game's props
+ */
+function mapStateToProps(state: StoreState): GameProps {
+	return {
+		history: state.history,
+    	stepNumber: state.stepNumber,
+    	whiteIsNext: state.whiteIsNext,
+    	pickedSquare: state.pickedSquare,
+    	validDestinations: state.validDestinations
+ 	}
+}
+ 
+/**
+ * Map Game's events to Redux actions
+ */
+function mapDispatchToProps(dispatch: {function(ReduxAction): any} ) {
+	return {
+		createPickSquareAction: (pos: Coordinate) => {
+			dispatch(createPickSquareAction(pos))
+		},
+		jumpToStep: (step: number) => {
+			dispatch(createJumpToStepAction(step))
+		}
+	}	
+ }
+ 
+export public const ConnectedGame = connect(mapStateToProps, mapDispatchToProps)(Game);

@@ -1,0 +1,461 @@
+import {Coordinate} from "Coordinate";
+import {Move} from "Move";
+import {Piece} from "Piece";
+import {Snapshot} from "store/StoreState";
+
+export public class GameRules {
+
+	public static isWhitepiece(piece: Piece): boolean {
+	  	switch (piece) {
+	  		case Piece.WHITE_PAWN:
+	  		case Piece.WHITE_ROOK:
+	  		case Piece.WHITE_KNIGHT:
+	  		case Piece.WHITE_BISHOP:
+	  		case Piece.WHITE_QUEEN:
+	  		case Piece.WHITE_KING:
+	  			return true;
+	  		default:
+	  			return false;
+	  	}
+	}
+	  
+	public static isBlackpiece(piece: Piece): boolean {
+		switch (piece) {
+			case Piece.BLACK_PAWN:
+	  		case Piece.BLACK_ROOK:
+	  		case Piece.BLACK_KNIGHT:
+	  		case Piece.BLACK_BISHOP:
+	  		case Piece.BLACK_QUEEN:
+	  		case Piece.BLACK_KING:
+	  			return true;
+	  		default:
+	  			return false;
+	  	}
+	}
+
+	/**
+	 * Retrieve all pieces of the same color
+	 */
+	 public static getAllPiecesSameColor(squares: Array<Array<Piece>>, isWhite: boolean): 
+	 										Array<~Object with {piece: Piece, pos: Coordinate}> {
+        const result = new Array<~Object with {piece: Piece, pos: Coordinate}>();
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                if ((isWhite && this.isWhitepiece(squares[row][col])) ||
+                    (!isWhite && this.isBlackpiece(squares[row][col]))) {
+                       result.push({piece: squares[row][col], pos: new Coordinate({row: row, col: col})});
+                   }
+            }
+        }
+        return result;
+    }
+
+  	/**
+     * Checks if a given move is valid
+     */
+    public static isValidMove(currentSnapshot: Snapshot, move: Move): boolean {
+        // A move is valid if the destination is one of the valid destinations.        
+        const validDestinations = this.calculateValidDestinations(currentSnapshot, move.piece, move.fromPos);
+        return validDestinations.findIndex((pos) => pos.equals(move.toPos)) >= 0;
+    }
+    
+	/**
+     * Calculate all destinations attacked by given piece
+     */
+    public static calculateAttackedDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        switch (piece) {
+            case (Piece.WHITE_KNIGHT):
+            case (Piece.BLACK_KNIGHT):
+                return this.calculateKnightAttackingDestinations(squares, piece, pos);
+
+            case (Piece.WHITE_ROOK):
+            case (Piece.BLACK_ROOK):
+                return this.calculateRookAttackingDestinations(squares, piece, pos);
+            
+            case (Piece.WHITE_BISHOP):
+            case (Piece.BLACK_BISHOP):
+                return this.calculateBishopAttackingDestinations(squares, piece, pos);
+               
+            case (Piece.WHITE_QUEEN):
+            case (Piece.BLACK_QUEEN):
+                return this.calculateQueenAttackingDestinations(squares, piece, pos);
+
+            case (Piece.WHITE_KING):
+            case (Piece.BLACK_KING):
+                return this.calculateKingAttackingDestinations(squares, piece, pos);
+               
+            case (Piece.WHITE_KING):
+            case (Piece.BLACK_KING):
+                return this.calculateKingAttackingDestinations(squares, piece, pos);
+                
+            case (Piece.WHITE_PAWN):
+            case (Piece.BLACK_PAWN):
+                return this.calculatePawnAttackingDestinations(squares, piece, pos);
+                
+        }
+        throw "Cannot happen";
+    }
+
+ 	public static calculatePawnAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const result: Array<Coordinate> = new Array<Coordinate>();
+        const isWhite = this.isWhitepiece(piece);
+        
+        if (isWhite && (pos.row < 7)) {
+            for (let dc of [1,-1]) {
+                const attackPos = new Coordinate({row: pos.row + 1, col: pos.col + dc});
+                if (this.isInsideBoard(attackPos) && this.isPositionOccupiedBypieceOtherColor(squares, piece, attackPos)) {
+                    result.push(attackPos);
+                }
+            }          
+        } else if (!isWhite && (pos.row > 0)) {
+            for (let dc of [1,-1]) {
+                const attackPos = new Coordinate({row: pos.row - 1, col: pos.col + dc});
+                if (this.isInsideBoard(attackPos) && this.isPositionOccupiedBypieceOtherColor(squares, piece, attackPos)) {
+                    result.push(attackPos);
+                }
+            }
+        }
+        return result;    
+    }
+
+    
+    public static calculateKnightAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const deltas: Array<Array<int>> = [[-1,-2], [-2,-1],[-2,1],[-1,2], [1,2], [2,1], [2,-1], [1,-2]];
+        const result = (deltas.map((delta) => new Coordinate({row: pos.row + delta[0], col: pos.col + delta[1]})) as Array<Coordinate>)
+                              .filter(coord => this.isInsideBoard(coord) && !this.isPositionOccupiedBypieceSameColor(squares, piece, coord));
+        return result;
+    }
+  
+    public static calculateRookAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const row = pos.row;
+        const col = pos.col;
+        const result: Array<Coordinate> = new Array<Coordinate>();
+
+        const deltas = [[-1,0], [1,0],[0,-1],[0,+1]]; // NORTH, EAST, SOUTH, WEST
+        // Iterate 4 directions
+        for (let delta of deltas) {
+            let newPos = new Coordinate({row: row + delta[0], col: col + delta[1]});
+            while (this.isInsideBoard(newPos)) {
+                if (!squares[newPos.row][newPos.col]) {
+                    result.push(newPos);
+                } else {
+                    // Square is occupied
+                    if (this.isPositionOccupiedBypieceSameColor(squares, piece, newPos)) {
+                        break;
+                    }
+                    
+                    if (this.isPositionOccupiedBypieceOtherColor(squares, piece, newPos)) {
+                        result.push(newPos);
+                        break;    
+                    }
+                }
+                newPos = new Coordinate({row: newPos.row + delta[0], col: newPos.col + delta[1]});
+            }
+        }
+        return result;
+    }
+
+    public static calculateBishopAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const row = pos.row;
+        const col = pos.col;
+        const result: Array<Coordinate> = new Array<Coordinate>();
+
+        const deltas = [[-1,-1], [-1,1], [1,1], [1,-1]]; // NORTH WEST, NORTH EAST, SOUTH EAST, SOUTH WEST
+        // Iterate 4 directions
+        for (let delta of deltas) {
+            let newPos = new Coordinate({row: row + delta[0], col: col + delta[1]});
+            while (this.isInsideBoard(newPos)) {
+                if (!squares[newPos.row][newPos.col]) {
+                    result.push(newPos);
+                } else {
+                    // Square is occupied
+                    if (this.isPositionOccupiedBypieceSameColor(squares, piece, newPos)) {
+                        break;
+                    }
+                    
+                    if (this.isPositionOccupiedBypieceOtherColor(squares, piece, newPos)) {
+                        result.push(newPos);
+                        break;    
+                    }
+                }
+                newPos = new Coordinate({row: newPos.row + delta[0], col: newPos.col + delta[1]});
+            }
+        }
+        return result;
+    }
+
+    public static calculateQueenAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const isWhite = this.isWhitepiece(piece);
+        // Queen's attack destinations is union of rook's and bishop's
+        if (isWhite) {
+            return this.calculateRookAttackingDestinations(squares, Piece.WHITE_ROOK, pos)
+                         .concat(this.calculateBishopAttackingDestinations(squares, Piece.WHITE_BISHOP, pos));
+        } else {
+            return this.calculateRookAttackingDestinations(squares, Piece.BLACK_ROOK, pos)
+                         .concat(this.calculateBishopAttackingDestinations(squares, Piece.BLACK_BISHOP, pos));
+        }
+    }
+   
+    public static calculateKingAttackingDestinations(squares: Array<Array<Piece>>, piece: Piece, pos: Coordinate): Array<Coordinate> {
+        const deltas = [[-1,-1], [-1,0], [-1,1], [0, 1], [1,1], [1,0], [1,-1],[0,-1]]; // NORTH WEST, WEST, NORTH EAST, EAST, SOUTH EAST, SOUTH, SOUTH WEST, WEST
+        const result = (deltas.map((delta) => new Coordinate({row: pos.row + delta[0], col: pos.col + delta[1]})) as Array<Coordinate>)
+                              .filter(coord => this.isInsideBoard(coord) && !this.isPositionOccupiedBypieceSameColor(squares, piece, coord));
+        return result;        
+    }
+
+ 	public static isPositionOccupiedBypieceSameColor(squares: Array<Array<Piece>>, piece: Piece, newPos: Coordinate) {
+    	const isWhite = this.isWhitepiece(piece);
+        if (isWhite && this.isWhitepiece(squares[newPos.row][newPos.col])) {
+            return true;
+        }
+        if (!isWhite && this.isBlackpiece(squares[newPos.row][newPos.col])) {
+            return true
+        }
+        return false;
+    }
+
+    public static isPositionOccupiedBypieceOtherColor(squares: Array<Array<Piece>>, piece: Piece, newPos: Coordinate) {
+        const isWhite = this.isWhitepiece(piece);
+        if (isWhite && this.isBlackpiece(squares[newPos.row][newPos.col])) {
+            return true;
+        }
+        if (!isWhite && this.isWhitepiece(squares[newPos.row][newPos.col])) {
+            return true
+        }
+        return false;
+    }
+
+    /**
+     * Calculates all valid destinations for a given piece at the given position
+     */
+    public static calculateValidDestinations(currentSnapshot: Snapshot, piece: Piece, pos: Coordinate): Array<Coordinate> {
+    	const {squares} = currentSnapshot;
+        const result = this.calculateAttackedDestinations(squares, piece, pos);
+        const isWhite = this.isWhitepiece(piece);
+
+        // Special case: Pawns can move forwards in addition to attacking positions
+        if (piece == Piece.WHITE_PAWN || piece == Piece.BLACK_PAWN) {
+            if (isWhite && (pos.row < 7)) {
+                const nextPos = new Coordinate({row: pos.row + 1, col: pos.col});
+                if (!squares[nextPos.row][nextPos.col]) {
+                    result.push(nextPos);
+                }
+                
+                if (pos.row <= 1) {
+                    const nextNextPos = new Coordinate({row: pos.row + 2, col: pos.col});
+                    if (!squares[nextPos.row][nextPos.col] && !squares[nextNextPos.row][nextNextPos.col]) {
+                        result.push(nextNextPos);
+                    }
+                }
+            } else if (!isWhite && (pos.row > 0)) {
+                const nextPos = new Coordinate({row: pos.row -1, col: pos.col});
+                if (!squares[nextPos.row][nextPos.col]) {
+                    result.push(nextPos);
+                }
+                if (pos.row >= 6) {
+                    const nextNextPos = new Coordinate({row: pos.row - 2, col: pos.col});
+                    if (!squares[nextPos.row][nextPos.col] && !squares[nextNextPos.row][nextNextPos.col]) {
+                        result.push(nextNextPos);
+                    }
+                }
+            }
+        }
+
+        // Special case: Kings can castle in addition to attacking positions
+        if ((piece == Piece.WHITE_KING) && isWhite && !currentSnapshot.whiteKingMoved) {
+            // White castling to the left
+            if (!currentSnapshot.leftWhiteRookMoved && !squares[pos.row][pos.col-1] && !squares[pos.row][pos.col-2] && !squares[pos.row][pos.col-3]) {
+                result.push(new Coordinate({row: pos.row, col: pos.col - 2}));                
+            }
+            // White castling to the right
+            if (!currentSnapshot.rightWhiteRookMoved && !squares[pos.row][pos.col+1] && !squares[pos.row][pos.col+2]) {
+                result.push(new Coordinate({row: pos.row, col: pos.col + 2}));                
+            }
+        } else if ((piece == Piece.BLACK_KING) && !isWhite && !currentSnapshot.blackKingMoved) {
+        	// White castling to the left
+            if (!currentSnapshot.leftBlackRookMoved && !squares[pos.row][pos.col-1] && !squares[pos.row][pos.col-2] && !squares[pos.row][pos.col-3]) {
+                result.push(new Coordinate({row: pos.row, col: pos.col - 2}));                
+            }
+            // White castling to the right
+            if (!currentSnapshot.rightBlackRookMoved && !squares[pos.row][pos.col+1] && !squares[pos.row][pos.col+2]) {
+                result.push(new Coordinate({row: pos.row, col: pos.col + 2}));                
+            }
+        }
+        // A move cannot cause the king to be in check
+        return result.filter(toPos => !this.isKingInCheckIfMove(currentSnapshot, new Move({piece : piece, fromPos: pos, toPos: toPos})));
+    }
+    
+    /**
+     * Check whether the king is in check if the move is made
+     */
+    public static isKingInCheckIfMove(currentSnapshot: Snapshot, attemptedMove: Move) {
+         // Check if the move causes the king to be in check
+        const {squares: changedSquares} = this.move(currentSnapshot, attemptedMove);
+        const isWhite = this.isWhitepiece(attemptedMove.piece);
+        const kingPos = this.getKingPosition(changedSquares, isWhite);
+        if (!kingPos) {
+            return false;
+        }
+        return this.isKingInCheck(changedSquares, isWhite? Piece.WHITE_KING : Piece.BLACK_KING, kingPos)        
+    }
+
+	public static getKingPosition(squares: Array<Array<Piece>>, isWhite: boolean): Coordinate {
+        for (let i = 0; i < squares.length; i++) {
+            for (let j = 0; j < squares[i].length; j++) {
+                if (isWhite? squares[i][j] == Piece.WHITE_KING : squares[i][j] == Piece.BLACK_KING) {
+                    return new Coordinate({row: i, col: j});                        
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the given king is in check.
+     */
+    public static isKingInCheck(squares: Array<Array<Piece>>, king: Piece, pos: Coordinate): boolean {
+        if ((king != Piece.WHITE_KING) && (king != Piece.BLACK_KING)) {
+            throw "The input piece is not a king";
+        }
+        const isWhiteKing: boolean = king == Piece.WHITE_KING;
+        // Union of all attacking destinations of opponent pieces
+        const opponentpieces = isWhiteKing? this.getPiecesOfSameColor(squares, false): this.getPiecesOfSameColor(squares, true);
+        let result = new Array<Coordinate>();
+        for (let opponentpiece of opponentpieces) {
+           const r: Array<Coordinate> = this.calculateAttackedDestinations(squares, opponentpiece.piece, opponentpiece.pos);
+           result = result.concat(r);
+        }
+        const b = result.find((p) => p.equals(pos)) ? true: false;
+        return b;
+    }
+ 
+     /**
+     *  Get all pieces of the same color
+     */
+    public static getPiecesOfSameColor(squares: Array<Array<Piece>>, white: boolean): Array<~Object with {piece: Piece, pos: Coordinate}> {
+        const result = new Array<~Object with {piece: Piece, pos: Coordinate}>();
+        for (let i = 0; i < squares.length; i++) {
+            for (let j = 0; j < squares[i].length; j++) {
+                if (white? this.isWhitepiece(squares[i][j]): this.isBlackpiece(squares[i][j])) {
+                    result.push({ piece:  squares[i][j], pos: new Coordinate({ row: i, col: j })});                    
+                }
+            }
+        }
+        return result;
+    }
+ 
+   /**
+     * Execute an attempted move and return the updated squares as well as the real moves (to handle castling case)
+     */
+    public static move(currentSnapshot: Snapshot, attemptedMove: Move): ~Object with {squares: Array<Array<Piece>>, moves: Array<Move>} {
+        const piece = attemptedMove.piece;
+        const fromPos = attemptedMove.fromPos;
+        const toPos = attemptedMove.toPos;
+       
+
+        const squares = currentSnapshot.squares; 
+        const newSquares: Array<Array<Piece>> = squares.map(rows => rows.slice());
+
+        const moves: Array<Move> = new Array<Move>();       
+        if (this.isCastlingMove(currentSnapshot, piece, fromPos, toPos)) {
+            // Move king
+            moves.push(new Move({
+                piece: piece,
+                fromPos: new Coordinate({ row: fromPos.row, col: fromPos.col}),
+                toPos: new Coordinate({ row: toPos.row, col: toPos.col})
+                })
+            );
+            newSquares[toPos.row][toPos.col] = piece;
+            newSquares[fromPos.row][fromPos.col] = null;
+
+            // Move rook
+            let rookFromPos: Coordinate;
+            let rookToPos: Coordinate;
+            if (piece == Piece.WHITE_KING) {
+                if (toPos.col < fromPos.col) {
+                    // White king castling to the left
+                    rookFromPos = new Coordinate({ row: 0, col: 0});
+                    rookToPos = new Coordinate({ row: 0, col: 3}); 
+                } else {
+                    // White king castling to the right
+                    rookFromPos = new Coordinate({ row: 0, col: 7});
+                    rookToPos = new Coordinate({ row: 0, col: 5});
+                    
+                }
+            } else {
+                if (toPos.col < fromPos.col) {
+                    // Black king castling to the left
+                    rookFromPos = new Coordinate({ row: 7, col: 0})
+                    rookToPos = new Coordinate({ row: 7, col: 3}) 
+                } else {
+                    rookFromPos = new Coordinate({ row: 7, col: 7});
+                    rookToPos = new Coordinate({ row: 7, col: 5});
+                }
+            }
+            moves.push(new Move({
+                piece: squares[rookFromPos.row][rookFromPos.col],
+                fromPos: rookFromPos,
+                toPos: rookToPos
+                })
+            );          
+            newSquares[rookToPos.row][rookToPos.col] = squares[rookFromPos.row][rookFromPos.col];
+            newSquares[rookFromPos.row][rookFromPos.col] = null;
+            
+        } else {
+            // Normal move
+            const piece = squares[fromPos.row][fromPos.col];
+            newSquares[toPos.row][toPos.col] = piece;
+            newSquares[fromPos.row][fromPos.col] = null;
+            moves.push(attemptedMove);
+        }
+        return {squares: newSquares, moves: moves};
+    }
+
+    /**
+     * Is castling move?
+     */
+    public static isCastlingMove(currentSnapshot: Snapshot, piece: Piece, fromPos: Coordinate, toPos: Coordinate): boolean {
+        if (piece == Piece.WHITE_KING && !currentSnapshot.whiteKingMoved && Math.abs(toPos.col - fromPos.col) == 2) {
+            return true;
+        }
+
+        if (piece == Piece.BLACK_KING && !currentSnapshot.blackKingMoved && Math.abs(toPos.col - fromPos.col) == 2) {
+            return true;
+        }
+        
+        return false;
+    }
+ 
+ 
+    /**
+     * Is a coordinate inside the board?
+     */
+    public static isInsideBoard(coord: Coordinate): boolean {
+        return (0 <= coord.row) && (coord.row < 8) && (0 <= coord.col) && (coord.col < 8);
+    }
+
+    /**
+     * Missing forAll for collection/array
+     */
+    public static <T> forAll(a: Array<T>, predicate: {function(T): boolean}): boolean {
+        return a.reduce((acc, elem) => acc && predicate(elem), true);
+    }
+    
+	/**
+  	 * Calculate the winner
+	 */
+	public static calculateWinner(currentSnapshot: Snapshot, whiteIsNext: boolean): string {
+		const squares = currentSnapshot.squares;
+        const allPieces = this.getAllPiecesSameColor(squares, whiteIsNext);
+        // Checkmate if all pieces have no valid destinations
+        const checkMate = 
+            this.forAll(allPieces, 
+                (p) => this.calculateValidDestinations(currentSnapshot, p.piece, p.pos).length == 0
+            );
+        if (checkMate) {
+            return whiteIsNext? 'Black': 'White';
+        } else {
+            return null;
+        }
+    }
+}

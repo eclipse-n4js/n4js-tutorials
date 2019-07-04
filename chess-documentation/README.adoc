@@ -1,0 +1,21 @@
+The chess projects demonstrate how to develop a chess game application using link:https://www.eclipse.org/n4js/[N4JS], link:https://reactjs.org/[React], and link:https://redux.js.org/[Redux].
+This folder contains the tutorials for the link:../chess-react/README.adoc[React] and link:../chess-react-redux/README.adoc[React+Redux] projects.
+
+
+The tutorial is hosted in the tutorial section of the link:https://www.eclipse.org/n4js/userguides/index.html#_tutorials[N4JS webpage].
+
+
+== Build the Chess tutorial pages
+
+We generate a tutorial page from `n4js-tutorial-chess.adoc` and `n4js-tutorial-chess-redux.adoc` located in the `doc` folder.
+The NPM script called `build-tutorial.sh` that can be used to build the tutorial page.
+In the root folder `n4js-tutorial-chess` , you can execute this script via
+
+[source,bash]
+----
+./build-tutorial.sh
+----
+
+
+When executed, the script generates the tutorial pages and stores all necessary `html`, `js` and image files in the folder `./generated-html`.
+You can integrate the chess tutorial into the official N4JS webpage by using the contents of that folder.

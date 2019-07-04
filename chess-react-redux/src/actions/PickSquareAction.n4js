@@ -1,0 +1,22 @@
+import {Coordinate} from "Coordinate";
+import {ActionBase} from "actions/ActionBase";
+
+/**
+ * Pick square action
+ */
+export public class PickSquareAction extends ActionBase {
+	/**
+	 * The coordinate of the picked square
+	 */
+	public coord: Coordinate;
+
+	public constructor(@Spec spec:~i~this) {}
+}
+
+/**
+ * Create a PickSquareAction
+ */
+export public function createPickSquareAction(pos: Coordinate): PickSquareAction {
+	return new PickSquareAction({ coord: pos });
+} 
+

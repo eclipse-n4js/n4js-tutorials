@@ -1,0 +1,14 @@
+import {ActionBase} from "actions/ActionBase";
+
+/**
+ * Jump to step action
+ */
+export public class JumpToStepAction extends ActionBase {
+	public step: number;
+
+	public constructor(@Spec spec:~i~this) {}
+}
+
+export public function createJumpToStepAction(step: number): ActionBase {
+	return new JumpToStepAction({ step : step });
+}

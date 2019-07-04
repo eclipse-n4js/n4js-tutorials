@@ -1,0 +1,30 @@
+/**
+ * Board's implementation coordinate 
+ */
+export public class Coordinate {
+    public row: number;
+    public col: number;
+    
+    public constructor(@Spec spec:~i~this) {}  
+ 
+    /**
+     * Compare two coordinates
+     */   
+    public equals(other: Coordinate): boolean {
+        return (this.row == other.row) && (this.col == other.col);
+    }
+
+    /**
+     * Convert the this to board's coordinate
+     */
+    public getBoardCoordinateRepresentation() {
+        const rowLabel = 8 - this.row;
+        const colLabel = String.fromCharCode('a'.charCodeAt(0) + this.col);
+        return `(${rowLabel + ',' + colLabel})`;
+    }
+
+    @Override
+    public toString(): string {
+        return `(${this.row},${this.col})`;       
+    }
+}

@@ -1,0 +1,13 @@
+import {ConnectedGame} from "components/Game";
+import {Provider} from "@n4jsd/react-redux";
+import {store} from "store/store";
+import * as ReactDOM from 'react-dom';
+
+const mountNode = document.getElementById("chessAppMountPoint")
+
+ReactDOM.render(
+	<Provider store={store}>
+		<ConnectedGame />
+	</Provider>,
+	mountNode
+)

@@ -1,0 +1,113 @@
+import {Coordinate} from "Coordinate";
+import {Piece} from "Piece";
+import {LabelSquare} from "components/CoordinateSquare";
+import {Square} from "components/Square";
+import * as React from "react";
+
+/**
+ * Board props
+ */
+export public interface ~BoardProps extends React.ComponentProps {
+    public squares: Array<Array<Piece>>;
+    public pickedSquare: Coordinate;
+    public validDestinations: Array<Coordinate>; 
+    public onClick: {function(Coordinate): void}
+}
+
+/**
+ * The board styles
+ */
+const boardStyles = {
+	display: 'flex',
+	flexWrap: 'wrap',
+	width: '100%',
+	height: '100%'
+}
+
+/**
+ * Each square occupies 100/10 = 10%
+ */
+const squareStyles = { 
+    width: '10%',
+    height: '10%'
+}
+
+/**
+ * Board React component
+ */
+export public class Board extends React.Component<BoardProps, Object> {
+   /**
+	* Render the i-th square on the board 0 <= i <= 63
+	*/	
+	private renderSquare(pos: Coordinate, isWhite: boolean, isPicked: boolean, isValidDestination: boolean, piece: Piece): React.Element<?> {
+	    return (
+	    	<div style={squareStyles}>  
+	        	<Square
+		          	isWhite={isWhite}
+		          	isPicked={isPicked}
+		          	isValidDestination={isValidDestination}
+		            piece={piece}
+		            onClick={() => this.props.onClick(pos)}
+	          	/>
+	      	</div>
+	    );
+  }
+
+   /**
+	* Render coordinate square
+	*/   
+	private renderCoordinateSquare(label: string): React.Element<?> {
+	    return (
+	      <div style={squareStyles}>
+	          <LabelSquare
+	            label={label}
+	          />
+	      </div>
+	    );
+  	}
+
+	private renderSquares(): Array<React.Element<?>> {
+	 	const squares = new Array<React.Element<?>>();
+		let isWhiteInitial = true;
+	    // Draw row coordinates: a b c ... h
+	    squares.push(this.renderCoordinateSquare(''));
+	    for (let i = 0; i < 8; i++) {
+	    	squares.push(this.renderCoordinateSquare(String.fromCharCode('a'.charCodeAt(0) + i)));
+	    }
+	    squares.push(this.renderCoordinateSquare(''));
+	
+	 	for (let row = 0; row < 8; row++) {
+	 	    // Draw column coordinate: 8 7 6 ... 1
+	 	    squares.push(this.renderCoordinateSquare((8-row).toString()));
+	 		let isWhite = isWhiteInitial;
+		 	for (let col = 0; col < 8; col++) {
+		 	    const pos = new Coordinate({row: row, col: col});
+		 	    const isPotentialDestination: boolean = 
+		 	        this.props.validDestinations.findIndex(potentialDest => potentialDest.equals(pos)) >= 0;
+		 		squares.push(this.renderSquare(pos, isWhite, 
+		 		    this.props.pickedSquare && this.props.pickedSquare.equals(pos)? true : false,  isPotentialDestination, this.props.squares[pos.row][pos.col]
+		 		));
+		 		isWhite = !isWhite;
+		 	}
+		 	isWhiteInitial = !isWhiteInitial;
+		 	squares.push(this.renderCoordinateSquare((8-row).toString()));
+		 }
+		// Draw row coordinates: a b c ... h
+		squares.push(this.renderCoordinateSquare(''));
+	    for (let i = 0; i < 8; i++) {
+	        squares.push(this.renderCoordinateSquare(String.fromCharCode('a'.charCodeAt(0) + i)));
+	    }
+	    squares.push(this.renderCoordinateSquare(''));
+	    
+	 	return squares;
+ 	}
+
+	@Override
+	public render(): React.Element<?> {
+		return (
+			<div style={boardStyles}>
+				{ this.renderSquares() }
+			</div>
+		);
+	}
+}

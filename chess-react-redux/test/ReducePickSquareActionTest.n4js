@@ -1,0 +1,36 @@
+import {Coordinate} from "Coordinate";
+import {createPickSquareAction} from "actions/PickSquareAction";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+import {reducer} from "reducers/reducer";
+import {StoreState} from "store/StoreState";
+import {initialState} from "store/StoreState";
+
+export public class ReducePickSquareActionTest {
+
+	private state: StoreState;
+
+	@Before
+	public init() {
+		this.state = initialState;
+		
+	}
+
+	@Test
+	public initialStateTest() {
+		const newState = reducer(null, null);
+		Assert.deepEqual(initialState, newState);
+	}
+
+	@Test
+	public knightValidDestinationsTest() {
+		const pickSquare = new Coordinate({row: 0, col: 1});
+		const pickLeftWhiteKnight = createPickSquareAction(pickSquare);
+		const newState = reducer(this.state, pickLeftWhiteKnight);
+		Assert.equal(newState.validDestinations.length, 2, 'Must have 2 valid destinations');
+		for (const validDest of newState.validDestinations) {
+			Assert.equal(validDest.row - pickSquare.row, 2, 'Wrong row');
+			Assert.equal(Math.abs(validDest.col - pickSquare.col), 1, 'Wrong column');	
+		}
+	}
+	// Reader: write tests for further chess game rules!
+}
