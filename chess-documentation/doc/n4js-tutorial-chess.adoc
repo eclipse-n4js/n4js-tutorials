@@ -1,3 +1,11 @@
+:toc-title: Jump to topic 
+:toc:
+:docinfo1:
+:last-update-label!:
+
+
+= Chess Game Tutorial (Part 1)
+
 == Overview
 
 link:https://reactjs.org/[React^] is a popular JavaScript library created by Facebook widely used for developing web user interface. N4JS provides full support for React as well as the JavaScript extension link:https://reactjs.org/docs/introducing-jsx.html[JSX^] for describing UI elements. Internally, we have been using N4JS in combination with React and JSX for years to develop very large e-commerce web applications.
