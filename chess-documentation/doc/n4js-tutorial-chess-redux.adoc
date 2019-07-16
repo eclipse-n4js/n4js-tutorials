@@ -1,3 +1,12 @@
+:toc-title: Jump to topic 
+:toc:
+:docinfo1:
+:last-update-label!:
+
+
+= Chess Game Tutorial (Part 2)
+
+
 == Overview
 
 In part 1, we have discussed how to develop a chess game app with React and JSX in N4JS. There, we have stored the application state in the React component Game's state. As applications become larger, however, the mix of application state and UI makes the application hard to comprehend and more difficult to test.

@@ -17,8 +17,8 @@ popd
 
 # Generate the tutorial page
 pushd doc
-	asciidoctor -a stylesheet=n4js-adoc.css n4js-tutorial-chess.adoc
-	asciidoctor -a stylesheet=n4js-adoc.css n4js-tutorial-chess-redux.adoc
+	asciidoctor -a linkcss n4js-tutorial-chess.adoc
+	asciidoctor -a linkcss n4js-tutorial-chess-redux.adoc
 popd
 
 # Move all generated files into doc/n4js-tutorial-chess folder
