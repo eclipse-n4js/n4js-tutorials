@@ -60,7 +60,6 @@ pipeline {
                 dir('n4js-tutorials/chess-react') {
 	                script {
 	                    sh 'npm install'
-                        sh 'echo "\nVersion of n4jsc.jar is: "'
 	                    sh './node_modules/n4js-cli/bin/n4jsc.js --version'
 	                    sh 'npm run build'
 	                    sh 'npm run webpack'
@@ -77,7 +76,6 @@ pipeline {
                 dir('n4js-tutorials/chess-react-redux') {
 	                script {
 	                    sh 'npm install'
-                        sh 'echo "\nVersion of n4jsc.jar is: "'
 	                    sh './node_modules/n4js-cli/bin/n4jsc.js --version'
 	                    sh 'npm run build'
 	                    sh 'npm run test'
