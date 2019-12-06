@@ -188,3 +188,18 @@ Note that the way we are testing the game logics is completely UI-agnostic and n
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/components/prism-typescript.min.js"></script>
 +++
 
+
+== Run the test
+
+You can execute the test cases either on the command line or in the N4JS Eclipse IDE.
+On the command line, run the tests by the defined npm script:
+
+
+[source,bash]
+----
+npm run test
+----
+
+
+To run the tests in the IDE, open the test file and right-click somewhere in its editor.
+In the context menu select "Run as" -> "Test in Node.js".
