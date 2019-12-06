@@ -8,7 +8,27 @@ image::images/chess-game-screenshot.png[Chess game screenshot]
 // tag::DevSetup[]
 == Developer Setup and generate folder `src-gen`
 
-Follow the following steps to import the app into N4JS IDE.
+There are two alternatives for the developer setup and the generation of the `src-gen` folder:
+to use either the N4JS Eclipse IDE or use the command line only.
+
+
+=== Use command line only
+
+
+Open the project folder in a shell and execute the following commands:
+
+[source,bash]
+----
+npm install  # download node_modules
+npm build    # generate js files in folder src-gen
+npm test     # run tests (only in chess-react-redux)
+npm webpack  # pack files to chess-app.js
+----
+
+
+
+=== Use N4JS Eclipse IDE
+
 
 Step 1::
 Download the latest N4JS IDE from the link:https://www.eclipse.org/n4js/downloads.html[N4JS Download Page] for your operating system.
@@ -18,15 +38,6 @@ The project is already an Eclipse project with the `.project` file in the root `
 Hence, you can simply import it into the N4JS IDE workspace via `File => Import => Existing Projects into Workspace`.
 The IDE may complain that npm dependencies declared in `package.json` are missing.
 Use the quickfix `run npm/yarn in this project` to fix this issue.
-+
-Alternativily, the following command can be executed in the root folder of the project `chess-react` to install all dependencies:
-+
-[source,bash]
-----
-npm install
-----
-
-
 
 
 Step 3::
@@ -50,7 +61,7 @@ Run it with:
 
 [source,bash]
 ----
-npm build
+npm webpack
 ----
 
 == Start local web server
