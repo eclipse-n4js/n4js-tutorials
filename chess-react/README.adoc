@@ -19,10 +19,8 @@ Open the project folder in a shell and execute the following commands:
 
 [source,bash]
 ----
-npm install  # download node_modules
-npm build    # generate js files in folder src-gen
-npm test     # run tests (only in chess-react-redux)
-npm webpack  # pack files to chess-app.js
+npm install      # download node_modules
+npm run build    # generate js files in folder src-gen
 ----
 
 
@@ -45,7 +43,7 @@ In the N4JS IDE, open the library manager (N4JS IDE => Preferences... => N4JS =>
 
 Step 4::
 Clean & Build the project. After this step, the project has no compilation errors anymore.
-
++
 Now, the folder `src-gen` should have been created and populated with `.js` files of the project.
 The `.js` files will be used in the next step by webpack.
 // end::DevSetup[] 
@@ -56,12 +54,12 @@ The `.js` files will be used in the next step by webpack.
 == Create the application
 
 
-The `package.json` defines a script `build` to run webpack and create the application `chess-app.js`.
+The `package.json` defines a script `webpack` to create the application `chess-app.js`.
 Run it with:
 
 [source,bash]
 ----
-npm webpack
+npm run webpack
 ----
 
 == Start local web server

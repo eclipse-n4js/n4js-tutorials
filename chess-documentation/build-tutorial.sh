@@ -13,6 +13,7 @@ pushd $BASH_FILE_DIR
 pushd ../chess-react
 	npm install
 	npm run build
+	npm run webpack
 popd
 
 # Generate the tutorial page
