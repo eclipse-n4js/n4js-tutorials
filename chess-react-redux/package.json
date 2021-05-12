@@ -5,8 +5,8 @@
 	"scripts": {
 		"preinstall": "npx npm-force-resolutions",
 		"start": "webpack-dev-server",
-		"build": "./node_modules/n4js-cli/bin/n4jsc.js . --clean --noPersist --testCatalog testCatalog.json",
-		"test": "./node_modules/n4js-mangelhaft-cli/bin/n4js-mangelhaft-cli.js --testCatalog testCatalog.json",
+		"build": "./node_modules/n4js-cli/bin/n4jsc.js . --clean --noPersist",
+		"test": "./node_modules/n4js-mangelhaft-cli/bin/n4js-mangelhaft-cli.js",
 		"webpack": "webpack"
 	},
 	"n4js": {
