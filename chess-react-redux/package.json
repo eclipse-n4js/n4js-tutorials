@@ -3,6 +3,7 @@
 	"author": "NumberFour AG",
 	"version": "0.0.1",
 	"scripts": {
+		"preinstall": "npx npm-force-resolutions",
 		"start": "webpack-dev-server",
 		"build": "./node_modules/n4js-cli/bin/n4jsc.js . --clean --noPersist --testCatalog testCatalog.json",
 		"test": "./node_modules/n4js-mangelhaft-cli/bin/n4js-mangelhaft-cli.js --testCatalog testCatalog.json",
@@ -22,30 +23,34 @@
 		"output": "src-gen"
 	},
 	"devDependencies": {
-		"n4js-cli": "latest",
-		"n4js-mangelhaft-cli": "latest",
 		"@n4jsd/react": "<=16.6.*",
 		"@n4jsd/react-dom": "<=16.6.*",
 		"@n4jsd/react-redux": "^6.0.0",
 		"@n4jsd/redux": "<=4.0.*",
 		"clean-webpack-plugin": "3.0.*",
-		"html-webpack-plugin": "3.2.*",
+		"html-webpack-plugin": "^5.3.1",
+		"n4js-cli": "latest",
+		"n4js-mangelhaft-cli": "latest",
 		"webpack": "4.42.*",
 		"webpack-cli": "3.3.*",
-		"webpack-dev-server": "3.10.*"
+		"webpack-dev-server": "^3.11.2"
 	},
 	"dependencies": {
+		"@zeit/next-css": "1.0.*",
+		"debug": "4.1.*",
 		"n4js-runtime": "latest",
 		"n4js-runtime-es2015": "latest",
 		"n4js-runtime-html5": "latest",
-		"org.eclipse.n4js.mangelhaft.assert": "latest",
+		"next": "^10.2.0",
 		"org.eclipse.n4js.mangelhaft": "latest",
-		"@zeit/next-css": "1.0.*",
-		"debug": "4.1.*",
-		"next": "9.3.*",
+		"org.eclipse.n4js.mangelhaft.assert": "latest",
 		"react": "16.6.*",
 		"react-dom": "16.6.*",
 		"react-redux": "6.0.*",
 		"redux": "4.0.*"
+	},
+	"resolutions": {
+		"underscore": "^1.12.1",
+		"postcss": "^8.2.10"
 	}
 }
