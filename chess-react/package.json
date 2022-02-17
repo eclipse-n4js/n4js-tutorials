@@ -35,7 +35,7 @@
 		"@zeit/next-css": "1.0.*",
 		"debug": "4.1.*",
 		"n4js-runtime": "latest",
-		"next": "^10.2.0",
+		"next": "^12.1.0",
 		"react": "16.6.*",
 		"react-dom": "16.6.*"
 	},
