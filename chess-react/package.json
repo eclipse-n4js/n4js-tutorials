@@ -22,7 +22,7 @@
 		"@n4jsd/react": "<=16.6.*",
 		"@n4jsd/react-dom": "<=16.6.*",
 		"clean-webpack-plugin": "3.0.*",
-		"html-webpack-plugin": "3.2.*",
+		"html-webpack-plugin": "5.5.*",
 		"n4js-cli": "latest",
 		"n4js-mangelhaft-cli": "latest",
 		"n4js-runtime-es2015": "latest",
